@@ -19,7 +19,7 @@ body{
   background:#fff0f6;
 }
 
-/* 🌸 배경 꽃 애니메이션 */
+/* 🌸 움직이는 배경 */
 body::before{
   content:"🌸 🌼 🌷 🌸 🌼 🌷";
   position:fixed;
@@ -50,7 +50,7 @@ body::before{
 }
 .top-fixed h1{
   text-align:center;
-  font-size:22px;   /* 제목은 기존 유지 */
+  font-size:22px;  /* 제목 그대로 유지 */
   margin-bottom:10px;
 }
 
@@ -75,28 +75,28 @@ body::before{
   border:none;
   background:#ffe6f4;
   border-radius:10px;
-  padding:5px 10px;
+  padding:3px 8px;
   cursor:pointer;
-  font-size:20px;   /* 2배 키움 */
+  font-size:12px;   /* 달력 버튼 크기 유지 */
 }
 
 .calendar-header{
   text-align:center;
-  font-size:22px;   /* 기존보다 키움 */
+  font-size:14px;   /* 유지 */
   font-weight:600;
 }
 
 .calendar-grid{
   display:grid;
   grid-template-columns:repeat(7,1fr);
-  gap:6px;
-  margin-top:8px;
+  gap:4px;
+  margin-top:6px;
 }
 
 .day{
   text-align:center;
-  padding:6px 0;
-  font-size:20px;    /* 날짜 숫자 2배 */
+  padding:4px 0;
+  font-size:12px;   /* 날짜 숫자 유지 */
   border-radius:50%;
   cursor:pointer;
   position:relative;
@@ -109,11 +109,11 @@ body::before{
 .day.saved::after{
   content:"";
   position:absolute;
-  bottom:4px;
+  bottom:2px;
   left:50%;
   transform:translateX(-50%);
-  width:6px;
-  height:6px;
+  width:4px;
+  height:4px;
   background:#ff4da6;
   border-radius:50%;
 }
@@ -122,28 +122,28 @@ body::before{
 .btn-row{
   display:flex;
   justify-content:space-between;
-  margin-top:12px;
+  margin-top:10px;
 }
 
 .save-btn, .delete-btn{
   flex:1;
-  margin:0 5px;
+  margin:0 3px;
   background:#ff7eb9;
   color:#fff;
   border:none;
   border-radius:15px;
-  padding:10px 15px;
-  font-size:20px;   /* 버튼 글씨 2배 */
+  padding:10px;       /* 크기 조금 증가 */
+  font-size:18px;     /* 글씨 크게 */
   cursor:pointer;
 }
 .delete-btn{
   background:#b8b8b8;
 }
 
-/* ↓ 달력과 1번 사이 공간 거의 제거됨 */
+/* 아래 영역 */
 .content{
   position:absolute;
-  top:255px;   /* 기존 300px → 간격 거의 없음 */
+  top:255px;   /* 🔥 달력 아래 간격 거의 제거됨 */
   left:0;
   width:100%;
   bottom:0;
@@ -152,31 +152,31 @@ body::before{
   background:#fff5f8;
 }
 
-/* 카드 */
+/* 기록 박스 */
 .field{
   background:white;
   border-radius:20px;
-  padding:18px;
-  margin-bottom:18px;
+  padding:20px;
+  margin-bottom:15px;
   box-shadow:0 10px 20px rgba(0,0,0,.08);
 }
 
-/* 1~7 제목 글씨 2배 */
+/* 1~7 제목 글씨 크게 */
 .field b{
   display:block;
   margin-bottom:10px;
-  font-size:28px;   /* 기존 14px → 2배 */
+  font-size:22px;   /* 기존 14px → 크게 */
   font-weight:700;
 }
 
-/* 입력 글씨도 모두 2배 키움 */
+/* 텍스트 입력 글씨 크게 */
 textarea{
   width:100%;
   min-height:80px;
   border-radius:12px;
   border:1px solid #eee;
   padding:14px;
-  font-size:22px;  /* 기존 13px → 2배 이상 */
+  font-size:18px;   /* 기존 13px → 크게 */
 }
 .big{min-height:150px;}
 </style>
