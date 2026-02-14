@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>🌸 나의 경험 해석 🌸</title>
 
+<!-- 🔥 PWA 설정 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff7eb9">
+<link rel="icon" type="image/png" sizes="192x192" href="192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="512.png">
+<link rel="apple-touch-icon" href="192.png">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
@@ -23,8 +30,8 @@ body::before{
   width:200%;
   height:100%;
   font-size:40px;
-  opacity:0.06;
-  animation:flowerMove 90s linear infinite;
+  opacity:0.05;
+  animation:flowerMove 100s linear infinite;
   pointer-events:none;
 }
 @keyframes flowerMove{
@@ -70,7 +77,7 @@ body::before{
   border:none;
   background:#ffe6f4;
   border-radius:10px;
-  padding:3px 8px;
+  padding:4px 8px;
   cursor:pointer;
   font-size:12px;
 }
@@ -128,35 +135,38 @@ body::before{
   transform:scale(1.1);
 }
 
-.buttons{
+/* 버튼 영역 */
+.button-row{
   display:flex;
   gap:8px;
   margin-top:8px;
 }
 
-.save-btn,.delete-btn{
+.save-btn{
   flex:1;
+  background:#ff7eb9;
+  color:#fff;
   border:none;
   border-radius:15px;
-  padding:6px 14px;
+  padding:6px;
   cursor:pointer;
   font-size:13px;
 }
 
-.save-btn{
-  background:#ff7eb9;
-  color:#fff;
-}
-
 .delete-btn{
+  flex:1;
   background:#ddd;
-  color:#333;
+  border:none;
+  border-radius:15px;
+  padding:6px;
+  cursor:pointer;
+  font-size:13px;
 }
 
 /* 입력 영역 */
 .content{
   position:absolute;
-  top:320px;
+  top:340px;
   left:0;
   width:100%;
   bottom:0;
@@ -175,7 +185,7 @@ body::before{
 
 textarea{
   width:100%;
-  min-height:120px;
+  min-height:250px;
   border-radius:14px;
   border:1px solid #eee;
   padding:16px;
@@ -206,7 +216,7 @@ textarea{
 
     <div class="calendar-grid" id="calendarGrid"></div>
 
-    <div class="buttons">
+    <div class="button-row">
       <button class="save-btn" onclick="saveData()">저장</button>
       <button class="delete-btn" onclick="deleteData()">삭제</button>
     </div>
@@ -214,21 +224,19 @@ textarea{
 </div>
 
 <div class="content">
-  <div class="field"><textarea id="f1" placeholder="1) 나에게 일어났던 일"></textarea></div>
-  <div class="field"><textarea id="f2" placeholder="2) 그때 감정"></textarea></div>
-  <div class="field"><textarea id="f3" placeholder="3) 그때 생각"></textarea></div>
-  <div class="field"><textarea id="f4" placeholder="4) 다른 가정 해보기"></textarea></div>
-  <div class="field"><textarea id="f5" placeholder="5) 다른 가정 선택하기"></textarea></div>
-  <div class="field"><textarea id="f6" placeholder="6) 선택한 이후의 생각"></textarea></div>
-  <div class="field"><textarea id="f7" placeholder="7) 선택한 이후의 감정"></textarea></div>
+  <div class="field"><textarea id="f1"></textarea></div>
+  <div class="field"><textarea id="f3"></textarea></div>
+  <div class="field"><textarea id="f4"></textarea></div>
+  <div class="field"><textarea id="f5"></textarea></div>
+  <div class="field"><textarea id="f6"></textarea></div>
 </div>
 
 <script>
 const STORAGE_KEY="mind_record";
-const fields=["f1","f2","f3","f4","f5","f6","f7"];
+const fields=["f1","f3","f4","f5","f6"];
 let selectedDate=new Date();
 
-/* 🔥 UTC 문제 완전 해결용 */
+/* 🔥 UTC 문제 해결용 */
 function formatDate(date){
   const y=date.getFullYear();
   const m=String(date.getMonth()+1).padStart(2,"0");
@@ -245,7 +253,6 @@ function renderCalendar(){
   const grid=document.getElementById("calendarGrid");
   const label=document.getElementById("monthLabel");
   grid.innerHTML="";
-
   const year=selectedDate.getFullYear();
   const month=selectedDate.getMonth();
   label.textContent=`${year}.${month+1}`;
@@ -289,11 +296,9 @@ function saveData(){
   const dateStr=formatDate(selectedDate);
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
   data[dateStr]={};
-
   fields.forEach(id=>{
     data[dateStr][id]=document.getElementById(id).value;
   });
-
   localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
   renderCalendar();
 }
@@ -303,31 +308,28 @@ function deleteData(){
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
   delete data[dateStr];
   localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
-  fields.forEach(id=>document.getElementById(id).value="");
+  fields.forEach(id=>{
+    document.getElementById(id).value="";
+  });
   renderCalendar();
 }
 
 function loadData(){
   const dateStr=formatDate(selectedDate);
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
-
   fields.forEach(id=>{
     document.getElementById(id).value=data[dateStr]?.[id]||"";
-    autoResize(document.getElementById(id));
   });
 }
 
-/* 자동 확장 */
+/* 자동 높이 */
 function autoResize(textarea){
   textarea.style.height="auto";
   textarea.style.height=textarea.scrollHeight+"px";
 }
-
-document.querySelectorAll("textarea").forEach(textarea=>{
-  autoResize(textarea);
-  textarea.addEventListener("input",()=>{
-    autoResize(textarea);
-  });
+document.querySelectorAll("textarea").forEach(t=>{
+  autoResize(t);
+  t.addEventListener("input",()=>autoResize(t));
 });
 
 renderCalendar();
