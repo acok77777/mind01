@@ -19,7 +19,7 @@ body{
   background:#fff0f6;
 }
 
-/* 🌸 움직이는 배경 */
+/* 🌸 움직이는 꽃 */
 body::before{
   content:"🌸 🌼 🌷 🌸 🌼 🌷";
   position:fixed;
@@ -50,7 +50,7 @@ body::before{
 }
 .top-fixed h1{
   text-align:center;
-  font-size:22px;  /* 제목 그대로 유지 */
+  font-size:22px;
   margin-bottom:10px;
 }
 
@@ -77,12 +77,12 @@ body::before{
   border-radius:10px;
   padding:3px 8px;
   cursor:pointer;
-  font-size:12px;   /* 달력 버튼 크기 유지 */
+  font-size:12px;
 }
 
 .calendar-header{
   text-align:center;
-  font-size:14px;   /* 유지 */
+  font-size:14px;
   font-weight:600;
 }
 
@@ -96,7 +96,7 @@ body::before{
 .day{
   text-align:center;
   padding:4px 0;
-  font-size:12px;   /* 날짜 숫자 유지 */
+  font-size:12px;
   border-radius:50%;
   cursor:pointer;
   position:relative;
@@ -132,18 +132,33 @@ body::before{
   color:#fff;
   border:none;
   border-radius:15px;
-  padding:10px;       /* 크기 조금 증가 */
-  font-size:18px;     /* 글씨 크게 */
+  padding:6px 12px;
+  font-size:13px;
   cursor:pointer;
 }
 .delete-btn{
   background:#b8b8b8;
 }
 
-/* 아래 영역 */
+.save-btn.bounce::after{
+  content:"💖";
+  position:absolute;
+  top:-25px;
+  left:50%;
+  transform:translateX(-50%);
+  animation:pop 1s ease forwards;
+  font-size:12px;
+}
+@keyframes pop{
+  0%{opacity:0;transform:translate(-50%,10px) scale(.5);}
+  50%{opacity:1;transform:translate(-50%,-10px) scale(1.2);}
+  100%{opacity:0;transform:translate(-50%,-30px);}
+}
+
+/* 아래 */
 .content{
   position:absolute;
-  top:255px;   /* 🔥 달력 아래 간격 거의 제거됨 */
+  top:300px;
   left:0;
   width:100%;
   bottom:0;
@@ -152,31 +167,26 @@ body::before{
   background:#fff5f8;
 }
 
-/* 기록 박스 */
+/* 카드 */
 .field{
   background:white;
   border-radius:20px;
-  padding:20px;
+  padding:15px;
   margin-bottom:15px;
   box-shadow:0 10px 20px rgba(0,0,0,.08);
 }
-
-/* 1~7 제목 글씨 크게 */
 .field b{
   display:block;
-  margin-bottom:10px;
-  font-size:22px;   /* 기존 14px → 크게 */
-  font-weight:700;
+  margin-bottom:6px;
+  font-size:14px;
 }
-
-/* 텍스트 입력 글씨 크게 */
 textarea{
   width:100%;
   min-height:80px;
   border-radius:12px;
   border:1px solid #eee;
-  padding:14px;
-  font-size:18px;   /* 기존 13px → 크게 */
+  padding:10px;
+  font-size:13px;
 }
 .big{min-height:150px;}
 </style>
@@ -208,22 +218,16 @@ textarea{
 <div class="content">
   <div class="field"><b>1) 나에게 일어났던 일</b>
     <textarea id="f1" class="big"></textarea></div>
-
   <div class="field"><b>2) 그때 감정</b>
     <textarea id="f2"></textarea></div>
-
   <div class="field"><b>3) 그때 생각</b>
     <textarea id="f3" class="big"></textarea></div>
-
   <div class="field"><b>4) 다른 가정 해보기</b>
     <textarea id="f4" class="big"></textarea></div>
-
   <div class="field"><b>5) 다른 가정 선택하기</b>
     <textarea id="f5" class="big"></textarea></div>
-
   <div class="field"><b>6) 선택 후 생각</b>
     <textarea id="f6" class="big"></textarea></div>
-
   <div class="field"><b>7) 선택 후 감정</b>
     <textarea id="f7"></textarea></div>
 </div>
@@ -237,7 +241,7 @@ const deleteBtn=document.getElementById("deleteBtn");
 
 let selectedDate=new Date();
 
-/* 한국시간 기준 날짜 생성 */
+/* 한국시간 기준 날짜 문자열 생성 (점찍힘 오류 해결) */
 function getDateString(date){
   const kst = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
   return kst.toISOString().slice(0,10);
@@ -298,6 +302,8 @@ function saveData(){
 
   localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
   renderCalendar();
+  saveBtn.classList.add("bounce");
+  setTimeout(()=>saveBtn.classList.remove("bounce"),1000);
 }
 
 function deleteData(){
