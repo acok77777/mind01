@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>🌸 나의 경험 해석 🌸</title>
 
+<!-- 앱 아이콘 -->
+<link rel="icon" type="image/png" sizes="192x192" href="192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="512.png">
+<link rel="apple-touch-icon" href="192.png">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
@@ -49,12 +54,12 @@ body::before{
   margin-bottom:10px;
 }
 
-/* 📅 달력 (반 크기) */
+/* 📅 달력 */
 .calendar{
   background:white;
   border-radius:15px;
   padding:10px;
-  width:280px;            /* 기존보다 작게 */
+  width:280px;
   margin:0 auto;
   box-shadow:0 6px 15px rgba(0,0,0,.1);
 }
@@ -113,20 +118,30 @@ body::before{
   border-radius:50%;
 }
 
-/* 저장 버튼 */
-.save-btn{
-  margin-top:8px;
+/* 저장·삭제 버튼 */
+.btn-row{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
+}
+
+.save-btn, .delete-btn{
+  flex:1;
+  margin:0 3px;
   background:#ff7eb9;
   color:#fff;
   border:none;
   border-radius:15px;
-  padding:5px 12px;
+  padding:6px 12px;
+  font-size:13px;
   cursor:pointer;
-  font-size:12px;
-  position:relative;
 }
+.delete-btn{
+  background:#b8b8b8;
+}
+
 .save-btn.bounce::after{
-  content:"💖 뿅!";
+  content:"💖";
   position:absolute;
   top:-25px;
   left:50%;
@@ -143,7 +158,7 @@ body::before{
 /* 아래 */
 .content{
   position:absolute;
-  top:260px;
+  top:300px;
   left:0;
   width:100%;
   bottom:0;
@@ -190,8 +205,13 @@ textarea{
       <button onclick="changeMonth(1)">▶</button>
       <button onclick="changeYear(1)">⏭</button>
     </div>
+
     <div class="calendar-grid" id="calendarGrid"></div>
-    <button class="save-btn" id="saveBtn">저장</button>
+
+    <div class="btn-row">
+      <button class="save-btn" id="saveBtn">저장</button>
+      <button class="delete-btn" id="deleteBtn">삭제</button>
+    </div>
   </div>
 </div>
 
@@ -215,8 +235,17 @@ textarea{
 <script>
 const STORAGE_KEY="mind_record";
 const fields=["f1","f2","f3","f4","f5","f6","f7"];
+
 const saveBtn=document.getElementById("saveBtn");
+const deleteBtn=document.getElementById("deleteBtn");
+
 let selectedDate=new Date();
+
+/* 한국시간 기준 날짜 문자열 생성 (점찍힘 오류 해결) */
+function getDateString(date){
+  const kst = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+  return kst.toISOString().slice(0,10);
+}
 
 function changeMonth(offset){
   selectedDate.setMonth(selectedDate.getMonth()+offset);
@@ -231,6 +260,7 @@ function renderCalendar(){
   const grid=document.getElementById("calendarGrid");
   const label=document.getElementById("monthLabel");
   grid.innerHTML="";
+
   const year=selectedDate.getFullYear();
   const month=selectedDate.getMonth();
   label.textContent=`${year}.${month+1}`;
@@ -249,7 +279,7 @@ function renderCalendar(){
     cell.className="day";
     cell.textContent=d;
 
-    const key=`${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const key=getDateString(new Date(year,month,d));
     if(data[key]) cell.classList.add("saved");
 
     cell.onclick=()=>{
@@ -262,27 +292,46 @@ function renderCalendar(){
 }
 
 function saveData(){
-  const dateStr=selectedDate.toISOString().slice(0,10);
+  const dateStr=getDateString(selectedDate);
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+
   data[dateStr]={};
   fields.forEach(id=>{
     data[dateStr][id]=document.getElementById(id).value;
   });
+
   localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
   renderCalendar();
   saveBtn.classList.add("bounce");
   setTimeout(()=>saveBtn.classList.remove("bounce"),1000);
 }
 
-function loadData(){
-  const dateStr=selectedDate.toISOString().slice(0,10);
+function deleteData(){
+  const dateStr=getDateString(selectedDate);
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+
+  delete data[dateStr];
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+
+  fields.forEach(id=>{
+    document.getElementById(id).value="";
+  });
+
+  renderCalendar();
+}
+
+function loadData(){
+  const dateStr=getDateString(selectedDate);
+  let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+
   fields.forEach(id=>{
     document.getElementById(id).value=data[dateStr]?.[id]||"";
   });
 }
 
 saveBtn.onclick=saveData;
+deleteBtn.onclick=deleteData;
+
 renderCalendar();
 loadData();
 </script>
