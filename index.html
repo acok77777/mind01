@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>🌸 나의 경험 해석 🌸</title>
 
-<!-- 🔥 PWA 설정 -->
+<!-- PWA 설정 -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ff7eb9">
 <link rel="icon" type="image/png" sizes="192x192" href="192.png">
@@ -21,7 +21,7 @@ body{
   background:#fff0f6;
 }
 
-/* 🌸 움직이는 꽃 */
+/* 🌸 배경 */
 body::before{
   content:"🌸 🌼 🌷 🌸 🌼 🌷";
   position:fixed;
@@ -135,22 +135,35 @@ body::before{
   transform:scale(1.1);
 }
 
-.save-btn{
+/* 버튼 */
+.button-row{
+  display:flex;
+  gap:6px;
   margin-top:8px;
-  background:#ff7eb9;
-  color:#fff;
+}
+
+.save-btn, .delete-btn{
+  flex:1;
   border:none;
   border-radius:15px;
-  padding:6px 14px;
+  padding:6px 10px;
   cursor:pointer;
   font-size:13px;
-  width:100%;
+}
+
+.save-btn{
+  background:#ff7eb9;
+  color:#fff;
+}
+
+.delete-btn{
+  background:#e0e0e0;
 }
 
 /* 입력 영역 */
 .content{
   position:absolute;
-  top:320px;
+  top:340px;
   left:0;
   width:100%;
   bottom:0;
@@ -199,18 +212,21 @@ textarea{
     </div>
 
     <div class="calendar-grid" id="calendarGrid"></div>
-    <button class="save-btn" onclick="saveData()">저장</button>
+
+    <div class="button-row">
+      <button class="save-btn" onclick="saveData()">저장</button>
+      <button class="delete-btn" onclick="deleteData()">삭제</button>
+    </div>
+
   </div>
 </div>
 
 <div class="content">
-
   <div class="field"><textarea id="f1"></textarea></div>
   <div class="field"><textarea id="f3"></textarea></div>
   <div class="field"><textarea id="f4"></textarea></div>
   <div class="field"><textarea id="f5"></textarea></div>
   <div class="field"><textarea id="f6"></textarea></div>
-
 </div>
 
 <script>
@@ -279,11 +295,29 @@ function saveData(){
   renderCalendar();
 }
 
+function deleteData(){
+  const dateStr=selectedDate.toISOString().slice(0,10);
+  let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+
+  if(data[dateStr]){
+    delete data[dateStr];
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+  }
+
+  fields.forEach(id=>{
+    document.getElementById(id).value="";
+    autoResize(document.getElementById(id));
+  });
+
+  renderCalendar();
+}
+
 function loadData(){
   const dateStr=selectedDate.toISOString().slice(0,10);
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
   fields.forEach(id=>{
     document.getElementById(id).value=data[dateStr]?.[id]||"";
+    autoResize(document.getElementById(id));
   });
 }
 
