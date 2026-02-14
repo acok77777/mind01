@@ -7,7 +7,6 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-
 body{
   font-family: system-ui, -apple-system, "Noto Sans KR", sans-serif;
   height:100vh;
@@ -15,7 +14,25 @@ body{
   background:#fff0f6;
 }
 
-/* ===== 상단 파스텔 그라데이션 ===== */
+/* 🌸 움직이는 꽃 */
+body::before{
+  content:"🌸 🌼 🌷 🌸 🌼 🌷";
+  position:fixed;
+  top:0;
+  left:-200px;
+  width:200%;
+  height:100%;
+  font-size:40px;
+  opacity:0.07;
+  animation:flowerMove 80s linear infinite;
+  pointer-events:none;
+}
+@keyframes flowerMove{
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
+}
+
+/* 상단 */
 .top-fixed{
   position:fixed;
   top:0;
@@ -23,124 +40,115 @@ body{
   width:100%;
   padding:18px;
   z-index:1000;
-
-  background:
-    radial-gradient(circle at 20px 20px, rgba(255,255,255,.6) 6px, transparent 7px),
-    linear-gradient(135deg, #ffd6ec, #c9f0ff);
+  background:linear-gradient(135deg,#ffd6ec,#c9f0ff);
   box-shadow:0 6px 25px rgba(0,0,0,.08);
 }
-
 .top-fixed h1{
   text-align:center;
   font-size:26px;
+  margin-bottom:15px;
+}
+
+/* 📅 커스텀 달력 */
+.calendar{
+  background:white;
+  border-radius:20px;
+  padding:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,.1);
+}
+.calendar-header{
+  text-align:center;
   margin-bottom:10px;
   font-weight:600;
 }
-
-.date-row{
-  display:flex;
-  gap:10px;
-  align-items:center;
+.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+}
+.day{
+  text-align:center;
+  padding:8px 0;
+  border-radius:50%;
+  cursor:pointer;
+  position:relative;
+}
+.day:hover{
+  background:#ffe6f4;
+}
+.day.saved::after{
+  content:"";
+  position:absolute;
+  bottom:3px;
+  left:50%;
+  transform:translateX(-50%);
+  width:6px;
+  height:6px;
+  background:#ff4da6;
+  border-radius:50%;
 }
 
-#dateInput{
-  flex:1;
-  height:44px;
-  border-radius:20px;
-  border:none;
-  padding:10px 14px;
-  font-size:15px;
-  background:#ffffff;
-  box-shadow:0 3px 10px rgba(0,0,0,.05);
-}
-
-.saved-indicator{
-  font-size:20px;
-}
-
-/* ===== 저장 버튼 하트 애니메이션 ===== */
+/* 저장 버튼 */
 .save-btn{
+  margin-top:10px;
   background:#ff7eb9;
   color:#fff;
   border:none;
   border-radius:20px;
-  padding:10px 18px;
+  padding:8px 16px;
   cursor:pointer;
-  font-size:15px;
-  transition:transform .2s;
   position:relative;
-  box-shadow:0 4px 12px rgba(255,126,185,.4);
 }
-
-.save-btn:active{
-  transform:scale(1.1);
-}
-
-.save-btn::after{
-  content:"💖";
+.save-btn.bounce::after{
+  content:"💖 뿅!";
   position:absolute;
-  right:-18px;
-  opacity:0;
-  transition:all .6s;
+  top:-30px;
+  left:50%;
+  transform:translateX(-50%);
+  animation:pop 1s ease forwards;
+}
+@keyframes pop{
+  0%{opacity:0;transform:translate(-50%,10px) scale(.5);}
+  50%{opacity:1;transform:translate(-50%,-10px) scale(1.2);}
+  100%{opacity:0;transform:translate(-50%,-30px);}
 }
 
-.save-btn.clicked::after{
-  opacity:1;
-  transform:translateY(-15px);
-}
-
-/* ===== 아래 크림핑크 꽃 패턴 ===== */
+/* 아래 */
 .content{
   position:absolute;
-  top:170px;
+  top:320px;
   left:0;
   width:100%;
   bottom:0;
   overflow-y:auto;
   padding:20px;
-
-  background:
-    radial-gradient(circle at 15px 15px, #ffffff 5px, transparent 6px),
-    radial-gradient(circle at 35px 35px, #ffe0f0 4px, transparent 5px);
-  background-size:50px 50px;
-  background-color:#fff5f8;
+  background:#fff5f8;
 }
 
-/* ===== 카드 ===== */
+/* 카드 */
 .field{
-  background:#ffffff;
+  background:white;
   border-radius:25px;
   padding:18px;
   margin-bottom:20px;
-  box-shadow:0 8px 20px rgba(0,0,0,.08);
-  transition:box-shadow .3s;
+  box-shadow:0 15px 30px rgba(0,0,0,.1);
+  transition:transform .2s;
 }
-
-.field.sparkle{
-  box-shadow:0 0 25px #ffd6f5;
+.field:hover{
+  transform:translateY(-5px);
 }
-
 .field b{
   display:block;
-  margin-bottom:10px;
-  font-size:17px;
-  font-weight:600;
+  margin-bottom:8px;
 }
-
 textarea{
   width:100%;
   min-height:90px;
   border-radius:18px;
   border:1px solid #eee;
   padding:12px;
-  font-size:15px;
-  resize:vertical;
-  background:#fff;
 }
-
-.big{
-  min-height:270px;
-}
+.big{min-height:200px;}
 </style>
 </head>
 
@@ -148,102 +156,95 @@ textarea{
 
 <div class="top-fixed">
   <h1>🌷 나의 경험 해석 🌷</h1>
-  <div class="date-row">
-    <input type="date" id="dateInput">
-    <span id="savedMark" class="saved-indicator"></span>
+
+  <div class="calendar">
+    <div class="calendar-header" id="monthLabel"></div>
+    <div class="calendar-grid" id="calendarGrid"></div>
     <button class="save-btn" id="saveBtn">저장</button>
   </div>
 </div>
 
 <div class="content">
-
-  <div class="field"><b>1) 나에게 일어났던 일</b><textarea id="f1" class="big"></textarea></div>
-  <div class="field"><b>2) 그때 감정</b><textarea id="f2"></textarea></div>
-  <div class="field"><b>3) 그때 생각</b><textarea id="f3" class="big"></textarea></div>
-  <div class="field"><b>4) 다른 가정 해보기</b><textarea id="f4" class="big"></textarea></div>
-  <div class="field"><b>5) 다른 가정 선택하기</b><textarea id="f5" class="big"></textarea></div>
-  <div class="field"><b>6) 선택한 이후의 생각</b><textarea id="f6" class="big"></textarea></div>
-  <div class="field"><b>7) 선택한 이후의 감정</b><textarea id="f7"></textarea></div>
-
+  <div class="field"><b>1) 나에게 일어났던 일</b>
+    <textarea id="f1" class="big" placeholder="오늘 어떤 일이 있었나요?"></textarea></div>
+  <div class="field"><b>2) 그때 감정</b>
+    <textarea id="f2" placeholder="느꼈던 감정은?"></textarea></div>
+  <div class="field"><b>3) 그때 생각</b>
+    <textarea id="f3" class="big" placeholder="스쳐간 생각은?"></textarea></div>
+  <div class="field"><b>4) 다른 가정 해보기</b>
+    <textarea id="f4" class="big" placeholder="다른 해석은?"></textarea></div>
+  <div class="field"><b>5) 다른 가정 선택하기</b>
+    <textarea id="f5" class="big" placeholder="새로운 해석은?"></textarea></div>
+  <div class="field"><b>6) 선택 후 생각</b>
+    <textarea id="f6" class="big" placeholder="생각 변화는?"></textarea></div>
+  <div class="field"><b>7) 선택 후 감정</b>
+    <textarea id="f7" placeholder="감정 변화는?"></textarea></div>
 </div>
 
 <script>
-const STORAGE_KEY = "mind_record";
-const fields = ["f1","f2","f3","f4","f5","f6","f7"];
-const dateInput = document.getElementById("dateInput");
-const savedMark = document.getElementById("savedMark");
-const saveBtn = document.getElementById("saveBtn");
+const STORAGE_KEY="mind_record";
+const fields=["f1","f2","f3","f4","f5","f6","f7"];
+const saveBtn=document.getElementById("saveBtn");
+let selectedDate=new Date();
 
-dateInput.value = new Date().toISOString().slice(0,10);
-loadData();
-updateSavedMark();
+function renderCalendar(){
+  const grid=document.getElementById("calendarGrid");
+  const label=document.getElementById("monthLabel");
+  grid.innerHTML="";
+  const year=selectedDate.getFullYear();
+  const month=selectedDate.getMonth();
+  label.textContent=`${year}년 ${month+1}월`;
 
-dateInput.addEventListener("change", ()=>{
-  loadData();
-  updateSavedMark();
-});
+  const first=new Date(year,month,1).getDay();
+  const last=new Date(year,month+1,0).getDate();
 
-fields.forEach(id=>{
-  document.getElementById(id).addEventListener("input", ()=>{
-    autoSave();
-    sparkleEffect();
-  });
-});
+  for(let i=0;i<first;i++){
+    grid.appendChild(document.createElement("div"));
+  }
 
-saveBtn.addEventListener("click", ()=>{
-  saveData();
-  heartEffect();
-});
+  const data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
 
-function saveData(){
-  const date = dateInput.value;
-  if(!date) return;
+  for(let d=1;d<=last;d++){
+    const cell=document.createElement("div");
+    cell.className="day";
+    cell.textContent=d;
 
-  let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    const key=`${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    if(data[key]) cell.classList.add("saved");
 
-  data[date] = {};
-  fields.forEach(id=>{
-    data[date][id] = document.getElementById(id).value;
-  });
+    cell.onclick=()=>{
+      selectedDate=new Date(year,month,d);
+      loadData();
+    };
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  updateSavedMark();
+    grid.appendChild(cell);
+  }
 }
 
-function autoSave(){
-  saveData();
+function saveData(){
+  const dateStr=selectedDate.toISOString().slice(0,10);
+  let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+  data[dateStr]={};
+  fields.forEach(id=>{
+    data[dateStr][id]=document.getElementById(id).value;
+  });
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+  renderCalendar();
+  saveBtn.classList.add("bounce");
+  setTimeout(()=>saveBtn.classList.remove("bounce"),1000);
 }
 
 function loadData(){
-  const date = dateInput.value;
-  if(!date) return;
-
-  let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-
+  const dateStr=selectedDate.toISOString().slice(0,10);
+  let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
   fields.forEach(id=>{
-    document.getElementById(id).value =
-      data[date]?.[id] || "";
+    document.getElementById(id).value=data[dateStr]?.[id]||"";
   });
 }
 
-function updateSavedMark(){
-  const date = dateInput.value;
-  let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-
-  savedMark.textContent = data[date] ? "🌷" : "";
-}
-
-function heartEffect(){
-  saveBtn.classList.add("clicked");
-  setTimeout(()=>saveBtn.classList.remove("clicked"),600);
-}
-
-function sparkleEffect(){
-  document.querySelectorAll(".field").forEach(f=>{
-    f.classList.add("sparkle");
-    setTimeout(()=>f.classList.remove("sparkle"),400);
-  });
-}
+saveBtn.onclick=saveData;
+renderCalendar();
+loadData();
 </script>
 
 </body>
