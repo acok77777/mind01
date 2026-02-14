@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>🌸 나의 경험 해석 🌸</title>
 
+<!-- 🔥 PWA 설정 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff7eb9">
+<link rel="icon" type="image/png" sizes="192x192" href="192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="512.png">
+<link rel="apple-touch-icon" href="192.png">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
@@ -108,9 +115,6 @@ body::before{
 }
 .day:hover{ background:#ffe6f4; }
 
-.day.sunday{color:#ff4d4d;}
-.day.saturday{color:#4d79ff;}
-
 .day.saved::after{
   content:"";
   position:absolute;
@@ -163,20 +167,6 @@ body::before{
   box-shadow:0 12px 25px rgba(0,0,0,.08);
 }
 
-.label{
-  margin-bottom:10px;
-}
-
-.label b{
-  display:block;
-  font-size:16px;
-}
-
-.label span{
-  font-size:13px;
-  color:#888;
-}
-
 textarea{
   width:100%;
   min-height:300px;
@@ -215,30 +205,11 @@ textarea{
 
 <div class="content">
 
-  <div class="field">
-    <div class="label"><b>1) 나에게 일어났던 일</b></div>
-    <textarea id="f1"></textarea>
-  </div>
-
-  <div class="field">
-    <div class="label"><b>3) 그때 생각</b></div>
-    <textarea id="f3"></textarea>
-  </div>
-
-  <div class="field">
-    <div class="label"><b>4) 다른 가정 해보기</b></div>
-    <textarea id="f4"></textarea>
-  </div>
-
-  <div class="field">
-    <div class="label"><b>5) 다른 가정 선택하기</b></div>
-    <textarea id="f5"></textarea>
-  </div>
-
-  <div class="field">
-    <div class="label"><b>6) 선택한 이후의 생각</b></div>
-    <textarea id="f6"></textarea>
-  </div>
+  <div class="field"><textarea id="f1"></textarea></div>
+  <div class="field"><textarea id="f3"></textarea></div>
+  <div class="field"><textarea id="f4"></textarea></div>
+  <div class="field"><textarea id="f5"></textarea></div>
+  <div class="field"><textarea id="f6"></textarea></div>
 
 </div>
 
