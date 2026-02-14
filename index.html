@@ -5,15 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>🌸 나의 경험 해석 🌸</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff7eb9">
-<link rel="icon" sizes="192x192" href="192.png">
-<link rel="icon" sizes="512x512" href="512.png">
-<link rel="apple-touch-icon" href="192.png">
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-
 body{
   font-family: system-ui, -apple-system, "Noto Sans KR", sans-serif;
   height:100vh;
@@ -21,12 +14,14 @@ body{
   background:#fff0f6;
 }
 
-/* 🌸 배경 */
+/* 🌸 움직이는 꽃 */
 body::before{
   content:"🌸 🌼 🌷 🌸 🌼 🌷";
   position:fixed;
-  top:0; left:-200px;
-  width:200%; height:100%;
+  top:0;
+  left:-200px;
+  width:200%;
+  height:100%;
   font-size:40px;
   opacity:0.06;
   animation:flowerMove 90s linear infinite;
@@ -40,12 +35,13 @@ body::before{
 /* 상단 */
 .top-fixed{
   position:fixed;
-  top:0; left:0;
+  top:0;
+  left:0;
   width:100%;
   padding:15px;
+  z-index:1000;
   background:linear-gradient(135deg,#ffd6ec,#c9f0ff);
   box-shadow:0 6px 25px rgba(0,0,0,.08);
-  z-index:1000;
 }
 .top-fixed h1{
   text-align:center;
@@ -69,6 +65,7 @@ body::before{
   align-items:center;
   margin-bottom:6px;
 }
+
 .calendar-controls button{
   border:none;
   background:#ffe6f4;
@@ -77,6 +74,7 @@ body::before{
   cursor:pointer;
   font-size:12px;
 }
+
 .calendar-header{
   text-align:center;
   font-size:14px;
@@ -106,46 +104,61 @@ body::before{
   border-radius:50%;
   cursor:pointer;
   position:relative;
+  transition:all .2s ease;
 }
+.day:hover{ background:#ffe6f4; }
+
 .day.saved::after{
   content:"";
   position:absolute;
   bottom:2px;
   left:50%;
   transform:translateX(-50%);
-  width:5px;height:5px;
+  width:5px;
+  height:5px;
   background:#ff4da6;
   border-radius:50%;
 }
+
 .day.today{ border:2px solid #ff7eb9; }
+
 .day.selected{
   background:#ff7eb9;
-  color:white;
+  color:white !important;
   transform:scale(1.1);
 }
 
-/* 버튼 */
-.button-row{
+.buttons{
   display:flex;
-  gap:6px;
+  gap:8px;
   margin-top:8px;
 }
+
 .save-btn,.delete-btn{
   flex:1;
   border:none;
   border-radius:15px;
-  padding:6px;
+  padding:6px 14px;
   cursor:pointer;
   font-size:13px;
 }
-.save-btn{background:#ff7eb9;color:white;}
-.delete-btn{background:#e0e0e0;}
+
+.save-btn{
+  background:#ff7eb9;
+  color:#fff;
+}
+
+.delete-btn{
+  background:#ddd;
+  color:#333;
+}
 
 /* 입력 영역 */
 .content{
   position:absolute;
-  top:350px;
-  left:0; width:100%;
+  top:320px;
+  left:0;
+  width:100%;
   bottom:0;
   overflow-y:auto;
   padding:25px;
@@ -155,26 +168,21 @@ body::before{
 .field{
   background:white;
   border-radius:20px;
-  padding:20px;
-  margin-bottom:20px;
+  padding:22px;
+  margin-bottom:25px;
   box-shadow:0 12px 25px rgba(0,0,0,.08);
-}
-
-.field b{
-  display:block;
-  margin-bottom:10px;
-  font-size:15px;
 }
 
 textarea{
   width:100%;
   min-height:120px;
-  border-radius:12px;
+  border-radius:14px;
   border:1px solid #eee;
-  padding:12px;
-  font-size:14px;
+  padding:16px;
+  font-size:15px;
   resize:none;
   overflow:hidden;
+  transition:height .15s ease;
 }
 </style>
 </head>
@@ -198,7 +206,7 @@ textarea{
 
     <div class="calendar-grid" id="calendarGrid"></div>
 
-    <div class="button-row">
+    <div class="buttons">
       <button class="save-btn" onclick="saveData()">저장</button>
       <button class="delete-btn" onclick="deleteData()">삭제</button>
     </div>
@@ -206,21 +214,27 @@ textarea{
 </div>
 
 <div class="content">
-
-  <div class="field"><b>1) 나에게 일어났던 일</b><textarea id="f1"></textarea></div>
-  <div class="field"><b>2) 그때 감정</b><textarea id="f2"></textarea></div>
-  <div class="field"><b>3) 그때 생각</b><textarea id="f3"></textarea></div>
-  <div class="field"><b>4) 다른 가정 해보기</b><textarea id="f4"></textarea></div>
-  <div class="field"><b>5) 다른 가정 선택하기</b><textarea id="f5"></textarea></div>
-  <div class="field"><b>6) 선택한 이후의 생각</b><textarea id="f6"></textarea></div>
-  <div class="field"><b>7) 선택한 이후의 감정</b><textarea id="f7"></textarea></div>
-
+  <div class="field"><textarea id="f1" placeholder="1) 나에게 일어났던 일"></textarea></div>
+  <div class="field"><textarea id="f2" placeholder="2) 그때 감정"></textarea></div>
+  <div class="field"><textarea id="f3" placeholder="3) 그때 생각"></textarea></div>
+  <div class="field"><textarea id="f4" placeholder="4) 다른 가정 해보기"></textarea></div>
+  <div class="field"><textarea id="f5" placeholder="5) 다른 가정 선택하기"></textarea></div>
+  <div class="field"><textarea id="f6" placeholder="6) 선택한 이후의 생각"></textarea></div>
+  <div class="field"><textarea id="f7" placeholder="7) 선택한 이후의 감정"></textarea></div>
 </div>
 
 <script>
 const STORAGE_KEY="mind_record";
 const fields=["f1","f2","f3","f4","f5","f6","f7"];
 let selectedDate=new Date();
+
+/* 🔥 UTC 문제 완전 해결용 */
+function formatDate(date){
+  const y=date.getFullYear();
+  const m=String(date.getMonth()+1).padStart(2,"0");
+  const d=String(date.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
 
 function changeMonth(offset){
   selectedDate.setMonth(selectedDate.getMonth()+offset);
@@ -231,6 +245,7 @@ function renderCalendar(){
   const grid=document.getElementById("calendarGrid");
   const label=document.getElementById("monthLabel");
   grid.innerHTML="";
+
   const year=selectedDate.getFullYear();
   const month=selectedDate.getMonth();
   label.textContent=`${year}.${month+1}`;
@@ -271,36 +286,49 @@ function renderCalendar(){
 }
 
 function saveData(){
-  const dateStr=selectedDate.toISOString().slice(0,10);
+  const dateStr=formatDate(selectedDate);
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
   data[dateStr]={};
+
   fields.forEach(id=>{
     data[dateStr][id]=document.getElementById(id).value;
   });
+
   localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
   renderCalendar();
 }
 
 function deleteData(){
-  const dateStr=selectedDate.toISOString().slice(0,10);
+  const dateStr=formatDate(selectedDate);
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
   delete data[dateStr];
   localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
-
-  fields.forEach(id=>{
-    document.getElementById(id).value="";
-  });
-
+  fields.forEach(id=>document.getElementById(id).value="");
   renderCalendar();
 }
 
 function loadData(){
-  const dateStr=selectedDate.toISOString().slice(0,10);
+  const dateStr=formatDate(selectedDate);
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
+
   fields.forEach(id=>{
     document.getElementById(id).value=data[dateStr]?.[id]||"";
+    autoResize(document.getElementById(id));
   });
 }
+
+/* 자동 확장 */
+function autoResize(textarea){
+  textarea.style.height="auto";
+  textarea.style.height=textarea.scrollHeight+"px";
+}
+
+document.querySelectorAll("textarea").forEach(textarea=>{
+  autoResize(textarea);
+  textarea.addEventListener("input",()=>{
+    autoResize(textarea);
+  });
+});
 
 renderCalendar();
 loadData();
