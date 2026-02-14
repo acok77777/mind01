@@ -50,7 +50,7 @@ body::before{
 }
 .top-fixed h1{
   text-align:center;
-  font-size:22px;  /* 제목 그대로 유지 */
+  font-size:22px;
   margin-bottom:10px;
 }
 
@@ -77,12 +77,12 @@ body::before{
   border-radius:10px;
   padding:3px 8px;
   cursor:pointer;
-  font-size:12px;   /* 달력 버튼 크기 유지 */
+  font-size:12px;
 }
 
 .calendar-header{
   text-align:center;
-  font-size:14px;   /* 유지 */
+  font-size:14px;
   font-weight:600;
 }
 
@@ -96,15 +96,13 @@ body::before{
 .day{
   text-align:center;
   padding:4px 0;
-  font-size:12px;   /* 날짜 숫자 유지 */
+  font-size:12px;
   border-radius:50%;
   cursor:pointer;
   position:relative;
 }
 
-.day:hover{
-  background:#ffe6f4;
-}
+.day:hover{background:#ffe6f4;}
 
 .day.saved::after{
   content:"";
@@ -132,18 +130,16 @@ body::before{
   color:#fff;
   border:none;
   border-radius:15px;
-  padding:10px;       /* 크기 조금 증가 */
-  font-size:18px;     /* 글씨 크게 */
+  padding:10px;
+  font-size:18px;
   cursor:pointer;
 }
-.delete-btn{
-  background:#b8b8b8;
-}
+.delete-btn{background:#b8b8b8;}
 
 /* 아래 영역 */
 .content{
   position:absolute;
-  top:255px;   /* 🔥 달력 아래 간격 거의 제거됨 */
+  top:255px;   /* 달력과 간격 거의 없음 */
   left:0;
   width:100%;
   bottom:0;
@@ -161,22 +157,24 @@ body::before{
   box-shadow:0 10px 20px rgba(0,0,0,.08);
 }
 
-/* 1~7 제목 글씨 크게 */
+/* 1~7 제목 */
 .field b{
   display:block;
   margin-bottom:10px;
-  font-size:22px;   /* 기존 14px → 크게 */
+  font-size:22px;
   font-weight:700;
 }
 
-/* 텍스트 입력 글씨 크게 */
+/* 텍스트 입력 */
 textarea{
   width:100%;
   min-height:80px;
   border-radius:12px;
   border:1px solid #eee;
   padding:14px;
-  font-size:18px;   /* 기존 13px → 크게 */
+  font-size:16px;
+  resize:none;           /* 사용자가 크기 조절 못하게 */
+  overflow:hidden;       /* 스크롤 숨김 */
 }
 .big{min-height:150px;}
 </style>
@@ -287,6 +285,11 @@ function renderCalendar(){
   }
 }
 
+function autoResize(el){
+  el.style.height="auto";
+  el.style.height=(el.scrollHeight)+"px";
+}
+
 function saveData(){
   const dateStr=getDateString(selectedDate);
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
@@ -309,6 +312,7 @@ function deleteData(){
 
   fields.forEach(id=>{
     document.getElementById(id).value="";
+    autoResize(document.getElementById(id));
   });
 
   renderCalendar();
@@ -319,12 +323,19 @@ function loadData(){
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}");
 
   fields.forEach(id=>{
-    document.getElementById(id).value=data[dateStr]?.[id]||"";
+    const el=document.getElementById(id);
+    el.value=data[dateStr]?.[id]||"";
+    autoResize(el);
   });
 }
 
 saveBtn.onclick=saveData;
 deleteBtn.onclick=deleteData;
+
+document.querySelectorAll("textarea").forEach(t=>{
+  t.addEventListener("input",()=>autoResize(t));
+  autoResize(t);
+});
 
 renderCalendar();
 loadData();
