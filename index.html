@@ -5,25 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>🌷 나의 경험 해석 🌷</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+<!-- 글씨체 변경 -->
+<link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 
 body{
-  font-family: 'Gaegu', cursive;
+  font-family: 'Poor Story', cursive;
   height:100vh;
   overflow:hidden;
-  background:#bfe6ff;
+  background:#fff9d6; /* 전체 기본 연노랑 */
 }
 
-/* ===== 상단 핑크 영역 ===== */
+/* ===== 상단 하늘색 영역 ===== */
 .top-fixed{
   position:fixed;
   top:0;
   left:0;
   width:100%;
-  background:#ffc9e6;
+  background:#bfe6ff; /* 하늘색 */
   padding:18px;
   box-shadow:0 4px 20px rgba(0,0,0,.08);
   z-index:1000;
@@ -61,14 +62,15 @@ button{
   border:none;
   cursor:pointer;
   font-size:15px;
+  font-family: 'Poor Story', cursive;
 }
 
 .save-btn{
-  background:#ff69b4;
+  background:#ff9ecf;
   color:#fff;
 }
 
-/* ===== 아래 도트 하늘 배경 ===== */
+/* ===== 아래 연한 노랑 도트 배경 ===== */
 .content{
   position:absolute;
   top:170px;
@@ -81,7 +83,7 @@ button{
   background:
     radial-gradient(#ffffff 1px, transparent 1px);
   background-size: 16px 16px;
-  background-color:#bfe6ff;
+  background-color:#fff9d6; /* 연노랑 */
 }
 
 .field{
@@ -106,7 +108,7 @@ textarea{
   padding:10px;
   font-size:16px;
   resize:vertical;
-  font-family: 'Gaegu', cursive;
+  font-family: 'Poor Story', cursive;
 }
 
 .big{
@@ -192,7 +194,7 @@ function saveData(){
   });
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  alert("저장 완료 💗");
+  alert("저장 완료 💛");
   updateSavedMark();
 }
 
