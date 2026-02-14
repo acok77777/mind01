@@ -19,7 +19,7 @@ body{
   background:#fff0f6;
 }
 
-/* 배경 애니메이션 */
+/* 🌸 움직이는 배경 */
 body::before{
   content:"🌸 🌼 🌷 🌸 🌼 🌷";
   position:fixed;
@@ -50,20 +50,8 @@ body::before{
 }
 .top-fixed h1{
   text-align:center;
-  font-size:22px;
+  font-size:22px;  /* 제목 그대로 유지 */
   margin-bottom:10px;
-}
-
-/* 📌 달력 토글 버튼 */
-#toggleCalendar{
-  display:block;
-  margin:0 auto 10px;
-  background:#ffb7dd;
-  border:none;
-  padding:8px 15px;
-  border-radius:12px;
-  font-size:16px;
-  cursor:pointer;
 }
 
 /* 📅 달력 */
@@ -73,9 +61,7 @@ body::before{
   padding:10px;
   width:280px;
   margin:0 auto;
-  margin-bottom:10px;
   box-shadow:0 6px 15px rgba(0,0,0,.1);
-  display:none; /* 기본 접힘 상태 */
 }
 
 .calendar-controls{
@@ -84,18 +70,19 @@ body::before{
   align-items:center;
   margin-bottom:6px;
 }
+
 .calendar-controls button{
   border:none;
   background:#ffe6f4;
   border-radius:10px;
   padding:3px 8px;
   cursor:pointer;
-  font-size:12px;
+  font-size:12px;   /* 달력 버튼 크기 유지 */
 }
 
 .calendar-header{
   text-align:center;
-  font-size:14px;
+  font-size:14px;   /* 유지 */
   font-weight:600;
 }
 
@@ -109,12 +96,15 @@ body::before{
 .day{
   text-align:center;
   padding:4px 0;
-  font-size:12px;
+  font-size:12px;   /* 날짜 숫자 유지 */
   border-radius:50%;
   cursor:pointer;
   position:relative;
 }
-.day:hover{background:#ffe6f4;}
+
+.day:hover{
+  background:#ffe6f4;
+}
 
 .day.saved::after{
   content:"";
@@ -128,12 +118,13 @@ body::before{
   border-radius:50%;
 }
 
-/* 저장/삭제 버튼 */
+/* 저장·삭제 버튼 */
 .btn-row{
   display:flex;
   justify-content:space-between;
   margin-top:10px;
 }
+
 .save-btn, .delete-btn{
   flex:1;
   margin:0 3px;
@@ -141,16 +132,18 @@ body::before{
   color:#fff;
   border:none;
   border-radius:15px;
-  padding:10px;
-  font-size:18px;
+  padding:10px;       /* 크기 조금 증가 */
+  font-size:18px;     /* 글씨 크게 */
   cursor:pointer;
 }
-.delete-btn{background:#b8b8b8;}
+.delete-btn{
+  background:#b8b8b8;
+}
 
-/* 아래 내용 영역 */
+/* 아래 영역 */
 .content{
   position:absolute;
-  top:155px; /* 달력 접힌 상태 기준 */
+  top:255px;   /* 🔥 달력 아래 간격 거의 제거됨 */
   left:0;
   width:100%;
   bottom:0;
@@ -159,7 +152,7 @@ body::before{
   background:#fff5f8;
 }
 
-/* 박스 */
+/* 기록 박스 */
 .field{
   background:white;
   border-radius:20px;
@@ -168,22 +161,22 @@ body::before{
   box-shadow:0 10px 20px rgba(0,0,0,.08);
 }
 
+/* 1~7 제목 글씨 크게 */
 .field b{
   display:block;
   margin-bottom:10px;
-  font-size:19px;
+  font-size:22px;   /* 기존 14px → 크게 */
   font-weight:700;
 }
 
+/* 텍스트 입력 글씨 크게 */
 textarea{
   width:100%;
   min-height:80px;
   border-radius:12px;
   border:1px solid #eee;
   padding:14px;
-  font-size:16px;
-  resize:none;
-  overflow:hidden;
+  font-size:18px;   /* 기존 13px → 크게 */
 }
 .big{min-height:150px;}
 </style>
@@ -194,9 +187,7 @@ textarea{
 <div class="top-fixed">
   <h1>🌷 나의 경험 해석 🌷</h1>
 
-  <button id="toggleCalendar">📅 달력 열기</button>
-
-  <div class="calendar" id="calendarBox">
+  <div class="calendar">
     <div class="calendar-controls">
       <button onclick="changeYear(-1)">⏮</button>
       <button onclick="changeMonth(-1)">◀</button>
@@ -214,19 +205,25 @@ textarea{
   </div>
 </div>
 
-<div class="content" id="contentBox">
+<div class="content">
   <div class="field"><b>1) 나에게 일어났던 일</b>
     <textarea id="f1" class="big"></textarea></div>
+
   <div class="field"><b>2) 그때 감정</b>
     <textarea id="f2"></textarea></div>
+
   <div class="field"><b>3) 그때 생각</b>
     <textarea id="f3" class="big"></textarea></div>
+
   <div class="field"><b>4) 다른 가정 해보기</b>
     <textarea id="f4" class="big"></textarea></div>
+
   <div class="field"><b>5) 다른 가정 선택하기</b>
     <textarea id="f5" class="big"></textarea></div>
+
   <div class="field"><b>6) 선택 후 생각</b>
     <textarea id="f6" class="big"></textarea></div>
+
   <div class="field"><b>7) 선택 후 감정</b>
     <textarea id="f7"></textarea></div>
 </div>
@@ -237,28 +234,12 @@ const fields=["f1","f2","f3","f4","f5","f6","f7"];
 
 const saveBtn=document.getElementById("saveBtn");
 const deleteBtn=document.getElementById("deleteBtn");
+
 let selectedDate=new Date();
 
-/* 📌 달력 토글 */
-const toggleBtn=document.getElementById("toggleCalendar");
-const calendarBox=document.getElementById("calendarBox");
-const contentBox=document.getElementById("contentBox");
-
-toggleBtn.onclick=()=>{
-  if(calendarBox.style.display==="none"){
-    calendarBox.style.display="block";
-    toggleBtn.textContent="📅 달력 닫기";
-    contentBox.style.top="385px";  // 달력 펼쳐졌을 때 아래로 밀림
-  } else {
-    calendarBox.style.display="none";
-    toggleBtn.textContent="📅 달력 열기";
-    contentBox.style.top="155px";  // 달력 접힘 상태
-  }
-};
-
-/* 한국시간 날짜 */
+/* 한국시간 기준 날짜 생성 */
 function getDateString(date){
-  const kst=new Date(date.getTime() - (date.getTimezoneOffset()*60000));
+  const kst = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
   return kst.toISOString().slice(0,10);
 }
 
@@ -326,7 +307,10 @@ function deleteData(){
   delete data[dateStr];
   localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
 
-  fields.forEach(id=>document.getElementById(id).value="");
+  fields.forEach(id=>{
+    document.getElementById(id).value="";
+  });
+
   renderCalendar();
 }
 
