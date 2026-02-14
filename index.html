@@ -1,561 +1,195 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>나의 경험 해석</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>나의 경험 해석</title>
 
-  <style>
-    :root{
-      --bg:#f7f7fb;
-      --card:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --shadow: 0 8px 24px rgba(0,0,0,.08);
-      --radius:16px;
-    }
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
 
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif;
-      background:var(--bg);
-      color:var(--text);
-    }
+body{
+  font-family: system-ui, -apple-system, "Noto Sans KR", sans-serif;
+  background:#f4f6fb;
+  color:#111;
+  height:100vh;
+  overflow:hidden; /* 전체 스크롤 막기 */
+}
 
-    .wrap{
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 18px 14px 64px;
-    }
+/* ===== 상단 고정 영역 ===== */
+.top-fixed{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background:#ffffff;
+  padding:14px;
+  box-shadow:0 4px 20px rgba(0,0,0,.08);
+  z-index:1000;
+}
 
-    header{
-      text-align:center;
-      margin: 10px 0 14px;
-    }
-    header h1{
-      margin:0;
-      font-size: 24px;
-      letter-spacing: -0.2px;
-    }
-    header p{
-      margin:6px 0 0;
-      color:var(--muted);
-      font-size: 13px;
-      line-height: 1.4;
-    }
+.top-fixed h1{
+  text-align:center;
+  font-size:20px;
+  margin-bottom:10px;
+}
 
-    .topbar{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 12px;
-      display:flex;
-      flex-direction: column;
-      gap: 10px;
-      position: sticky;
-      top: 10px;
-      z-index: 10;
-    }
+.date-row{
+  display:flex;
+  gap:10px;
+}
 
-    .date-row{
-      display:flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+#dateInput{
+  flex:1;
+  height:44px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  padding:10px;
+  font-size:16px;
+}
 
-    .date-row label{
-      font-size: 14px;
-      color: var(--muted);
-      min-width: 64px;
-    }
+button{
+  padding:10px 14px;
+  border-radius:12px;
+  border:none;
+  cursor:pointer;
+  font-size:14px;
+}
 
-    /* 달력 날짜 길게 */
-    #dateInput{
-      flex: 1 1 280px;
-      width: 100%;
-      height: 44px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      font-size: 16px;
-      background:#fff;
-      outline:none;
-    }
-    #dateInput:focus{
-      border-color:#a5b4fc;
-      box-shadow: 0 0 0 4px rgba(99,102,241,.15);
-    }
+.save-btn{
+  background:#111;
+  color:#fff;
+}
 
-    .btn-row{
-      display:flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+/* ===== 아래 스크롤 영역 ===== */
+.content{
+  position:absolute;
+  top:140px; /* 상단 고정 높이만큼 띄움 */
+  left:0;
+  width:100%;
+  bottom:0;
+  overflow-y:auto; /* 여기만 스크롤 */
+  padding:15px;
+}
 
-    button{
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 14px;
-      cursor: pointer;
-      min-height: 40px;
-    }
-    button:hover{filter:brightness(.98);}
-    button.primary{
-      background:#111827;
-      border-color:#111827;
-      color:#fff;
-    }
-    button.danger{
-      background:#fee2e2;
-      border-color:#fecaca;
-      color:#991b1b;
-    }
+/* 박스 스타일 */
+.field{
+  background:#fff;
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,.06);
+}
 
-    .status{
-      text-align:center;
-      font-size: 13px;
-      color: var(--muted);
-      min-height: 18px;
-    }
+.field b{
+  display:block;
+  margin-bottom:6px;
+  font-size:14px;
+}
 
-    .card{
-      margin-top: 14px;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px;
-    }
-
-    /* “세로로” 양식 */
-    .form{
-      display:flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .field{
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 10px;
-      background:#fff;
-    }
-
-    .field .label{
-      display:flex;
-      justify-content: space-between;
-      gap:10px;
-      margin-bottom: 8px;
-      align-items: baseline;
-    }
-    .field .label b{
-      font-size: 14px;
-      letter-spacing: -0.2px;
-    }
-    .field .label span{
-      color: var(--muted);
-      font-size: 12px;
-      white-space: nowrap;
-    }
-
-    textarea{
-      width: 100%;
-      min-height: 92px;
-      resize: vertical;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px 10px;
-      font-size: 15px;
-      line-height: 1.5;
-      outline:none;
-      background:#fafafa;
-    }
-    textarea:focus{
-      background:#fff;
-      border-color:#a5b4fc;
-      box-shadow: 0 0 0 4px rgba(99,102,241,.12);
-    }
-
-    .two-col{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 720px){
-      .two-col{grid-template-columns: 1fr;}
-    }
-
-    .footer-note{
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 12px;
-      text-align:center;
-    }
-
-    /* 팝업(백업 JSON) */
-    dialog{
-      border:none;
-      border-radius: 16px;
-      padding: 0;
-      width: min(720px, 92vw);
-      box-shadow: 0 30px 80px rgba(0,0,0,.25);
-    }
-    .dlg{
-      padding: 14px;
-      background:#fff;
-    }
-    .dlg h2{
-      margin: 0 0 8px;
-      font-size: 16px;
-    }
-    .dlg textarea{
-      min-height: 220px;
-      background:#fff;
-    }
-    .dlg .dlg-actions{
-      display:flex;
-      gap: 8px;
-      justify-content: flex-end;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-  </style>
+textarea{
+  width:100%;
+  min-height:90px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  padding:8px;
+  font-size:15px;
+  resize:vertical;
+}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <header>
-      <h1>나의 경험 해석</h1>
-      <p>날짜를 선택하면 그 날짜의 기록이 열려요. 작성 후 저장하면 자동으로 날짜별로 보관됩니다.</p>
-    </header>
 
-    <section class="topbar" aria-label="날짜 선택 및 저장">
-      <div class="date-row">
-        <label for="dateInput">날짜</label>
-        <input id="dateInput" type="date" />
-      </div>
+<!-- 상단 고정 -->
+<div class="top-fixed">
+  <h1>나의 경험 해석</h1>
+  <div class="date-row">
+    <input type="date" id="dateInput">
+    <button class="save-btn" onclick="saveData()">저장</button>
+  </div>
+</div>
 
-      <div class="btn-row">
-        <button class="primary" id="saveBtn">저장</button>
-        <button id="loadBtn">불러오기</button>
-        <button class="danger" id="deleteBtn">이 날짜 삭제</button>
-        <button id="exportBtn">전체 백업(내보내기)</button>
-        <button id="importBtn">백업 복원(가져오기)</button>
-      </div>
+<!-- 스크롤 영역 -->
+<div class="content">
 
-      <div class="status" id="status"></div>
-    </section>
-
-    <section class="card">
-      <form class="form" id="form">
-        <div class="field">
-          <div class="label">
-            <b>1) 나에게 일어났던 일</b>
-            <span>상황을 있는 그대로</span>
-          </div>
-          <textarea id="f1" placeholder="예) 오늘 누가 뭐라고 말했는지, 어떤 일이 있었는지"></textarea>
-        </div>
-
-        <div class="two-col">
-          <div class="field">
-            <div class="label">
-              <b>2) 그때 감정</b>
-              <span>감정 이름/강도</span>
-            </div>
-            <textarea id="f2" placeholder="예) 불안 7/10, 속상함, 분노, 두려움..."></textarea>
-          </div>
-
-          <div class="field">
-            <div class="label">
-              <b>3) 그때 생각</b>
-              <span>머릿속 자동 생각</span>
-            </div>
-            <textarea id="f3" placeholder="예) ‘나는 또 망했어’, ‘날 싫어할 거야’ 같은 생각"></textarea>
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="label">
-            <b>4) 다른 가정 해보기</b>
-            <span>다른 해석/가능성</span>
-          </div>
-          <textarea id="f4" placeholder="예) 그 사람도 바빴을 수 있다, 내 잘못만은 아니다, 사실 확인이 필요하다..."></textarea>
-        </div>
-
-        <div class="field">
-          <div class="label">
-            <b>5) 다른 가정 선택하기</b>
-            <span>내가 채택할 해석 1개</span>
-          </div>
-          <textarea id="f5" placeholder="예) ‘나는 충분히 잘하고 있고, 지금은 쉬어도 된다’ 같은 선택"></textarea>
-        </div>
-
-        <div class="two-col">
-          <div class="field">
-            <div class="label">
-              <b>6) 선택한 이후의 생각</b>
-              <span>바뀐 생각</span>
-            </div>
-            <textarea id="f6" placeholder="예) ‘괜찮아, 다시 정리하면 돼’"></textarea>
-          </div>
-
-          <div class="field">
-            <div class="label">
-              <b>7) 선택한 이후의 감정</b>
-              <span>바뀐 감정/강도</span>
-            </div>
-            <textarea id="f7" placeholder="예) 안정 5/10, 마음이 조금 가벼움"></textarea>
-          </div>
-        </div>
-
-        <div class="footer-note">
-          ※ 저장은 이 기기/브라우저에 보관됩니다(로컬 저장). 다른 기기에서는 보이지 않아요. 백업 기능을 권장합니다.
-        </div>
-      </form>
-    </section>
+  <div class="field">
+    <b>1) 나에게 일어났던 일</b>
+    <textarea id="f1"></textarea>
   </div>
 
-  <!-- 백업/복원 다이얼로그 -->
-  <dialog id="backupDialog">
-    <div class="dlg">
-      <h2 id="dlgTitle">백업</h2>
-      <textarea id="backupText" spellcheck="false"></textarea>
-      <div class="dlg-actions">
-        <button id="dlgCloseBtn">닫기</button>
-        <button class="primary" id="dlgActionBtn">확인</button>
-      </div>
-    </div>
-  </dialog>
+  <div class="field">
+    <b>2) 그때 감정</b>
+    <textarea id="f2"></textarea>
+  </div>
 
-  <script>
-    // ========= 설정 =========
-    const STORAGE_KEY = "experience_interpretation_v1"; // 전체 저장소
-    const $ = (id) => document.getElementById(id);
+  <div class="field">
+    <b>3) 그때 생각</b>
+    <textarea id="f3"></textarea>
+  </div>
 
-    const dateInput = $("dateInput");
-    const statusEl = $("status");
+  <div class="field">
+    <b>4) 다른 가정 해보기</b>
+    <textarea id="f4"></textarea>
+  </div>
 
-    const fields = [
-      $("f1"), $("f2"), $("f3"), $("f4"), $("f5"), $("f6"), $("f7")
-    ];
+  <div class="field">
+    <b>5) 다른 가정 선택하기</b>
+    <textarea id="f5"></textarea>
+  </div>
 
-    // ========= 유틸 =========
-    function todayISO(){
-      const d = new Date();
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth()+1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      return `${yyyy}-${mm}-${dd}`;
-    }
+  <div class="field">
+    <b>6) 선택한 이후의 생각</b>
+    <textarea id="f6"></textarea>
+  </div>
 
-    function readStore(){
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw) return {};
-        const obj = JSON.parse(raw);
-        return (obj && typeof obj === "object") ? obj : {};
-      }catch{
-        return {};
-      }
-    }
+  <div class="field">
+    <b>7) 선택한 이후의 감정</b>
+    <textarea id="f7"></textarea>
+  </div>
 
-    function writeStore(obj){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
-    }
+</div>
 
-    function getDateKey(){
-      const v = dateInput.value;
-      return v ? v : null;
-    }
+<script>
+const STORAGE_KEY = "mind_record";
 
-    function setStatus(msg){
-      statusEl.textContent = msg || "";
-      if(msg){
-        clearTimeout(setStatus._t);
-        setStatus._t = setTimeout(() => { statusEl.textContent = ""; }, 2500);
-      }
-    }
+const fields = ["f1","f2","f3","f4","f5","f6","f7"];
+const dateInput = document.getElementById("dateInput");
 
-    function clearForm(){
-      fields.forEach(t => t.value = "");
-    }
+// 오늘 날짜 기본 설정
+dateInput.value = new Date().toISOString().slice(0,10);
+loadData();
 
-    function getFormData(){
-      return {
-        f1: fields[0].value.trim(),
-        f2: fields[1].value.trim(),
-        f3: fields[2].value.trim(),
-        f4: fields[3].value.trim(),
-        f5: fields[4].value.trim(),
-        f6: fields[5].value.trim(),
-        f7: fields[6].value.trim(),
-        updatedAt: new Date().toISOString()
-      };
-    }
+// 날짜 변경 시 자동 불러오기
+dateInput.addEventListener("change", loadData);
 
-    function setFormData(data){
-      fields[0].value = data?.f1 ?? "";
-      fields[1].value = data?.f2 ?? "";
-      fields[2].value = data?.f3 ?? "";
-      fields[3].value = data?.f4 ?? "";
-      fields[4].value = data?.f5 ?? "";
-      fields[5].value = data?.f6 ?? "";
-      fields[6].value = data?.f7 ?? "";
-    }
+function saveData(){
+  const date = dateInput.value;
+  if(!date) return;
 
-    function loadForSelectedDate(){
-      const key = getDateKey();
-      if(!key){
-        setStatus("날짜를 먼저 선택해줘.");
-        return;
-      }
-      const store = readStore();
-      const data = store[key];
-      if(!data){
-        clearForm();
-        setStatus(`${key} 기록이 없어서 새로 작성할 수 있어요.`);
-        return;
-      }
-      setFormData(data);
-      setStatus(`${key} 저장된 기록을 불러왔어요.`);
-    }
+  let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
 
-    function saveForSelectedDate(){
-      const key = getDateKey();
-      if(!key){
-        setStatus("날짜를 먼저 선택해줘.");
-        return;
-      }
-      const store = readStore();
-      store[key] = getFormData();
-      writeStore(store);
-      setStatus(`${key} 저장 완료!`);
-    }
+  data[date] = {};
+  fields.forEach(id=>{
+    data[date][id] = document.getElementById(id).value;
+  });
 
-    function deleteForSelectedDate(){
-      const key = getDateKey();
-      if(!key){
-        setStatus("날짜를 먼저 선택해줘.");
-        return;
-      }
-      const store = readStore();
-      if(!store[key]){
-        setStatus("삭제할 기록이 없어요.");
-        return;
-      }
-      const ok = confirm(`${key} 기록을 삭제할까요? (되돌릴 수 없어요)`);
-      if(!ok) return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  alert("저장 완료 💛");
+}
 
-      delete store[key];
-      writeStore(store);
-      clearForm();
-      setStatus(`${key} 기록 삭제됨.`);
-    }
+function loadData(){
+  const date = dateInput.value;
+  if(!date) return;
 
-    // ========= 자동 저장(원하면 끄면 됨) =========
-    let autosaveTimer = null;
-    function scheduleAutosave(){
-      clearTimeout(autosaveTimer);
-      autosaveTimer = setTimeout(() => {
-        const key = getDateKey();
-        if(!key) return;
-        // 내용이 전부 비어있으면 저장하지 않음(원치 않으면 이 조건 지워도 됨)
-        const any = fields.some(t => t.value.trim().length > 0);
-        if(!any) return;
-        saveForSelectedDate();
-      }, 900);
-    }
+  let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
 
-    // ========= 백업/복원 =========
-    const dlg = $("backupDialog");
-    const dlgTitle = $("dlgTitle");
-    const dlgText = $("backupText");
-    const dlgCloseBtn = $("dlgCloseBtn");
-    const dlgActionBtn = $("dlgActionBtn");
+  fields.forEach(id=>{
+    document.getElementById(id).value =
+      data[date]?.[id] || "";
+  });
+}
+</script>
 
-    let dlgMode = "export"; // export | import
-
-    function openExport(){
-      dlgMode = "export";
-      dlgTitle.textContent = "전체 백업(내보내기)";
-      dlgText.value = JSON.stringify(readStore(), null, 2);
-      dlgActionBtn.textContent = "복사 안내";
-      dlg.showModal();
-      dlgText.focus();
-      dlgText.select();
-    }
-
-    function openImport(){
-      dlgMode = "import";
-      dlgTitle.textContent = "백업 복원(가져오기)";
-      dlgText.value = "";
-      dlgActionBtn.textContent = "복원하기";
-      dlg.showModal();
-      dlgText.focus();
-    }
-
-    dlgCloseBtn.addEventListener("click", () => dlg.close());
-    dlg.addEventListener("click", (e) => {
-      // 배경 클릭하면 닫기
-      const rect = dlg.getBoundingClientRect();
-      const inDialog = (
-        rect.top <= e.clientY && e.clientY <= rect.bottom &&
-        rect.left <= e.clientX && e.clientX <= rect.right
-      );
-      if(!inDialog) dlg.close();
-    });
-
-    dlgActionBtn.addEventListener("click", async () => {
-      if(dlgMode === "export"){
-        try{
-          await navigator.clipboard.writeText(dlgText.value);
-          setStatus("백업 JSON이 클립보드에 복사됐어요!");
-        }catch{
-          setStatus("복사가 막혔어요. 텍스트를 길게 눌러 직접 복사해줘.");
-        }
-        dlg.close();
-        return;
-      }
-
-      // import
-      try{
-        const obj = JSON.parse(dlgText.value || "{}");
-        if(!obj || typeof obj !== "object") throw new Error("invalid");
-        writeStore(obj);
-        setStatus("복원 완료! 날짜를 눌러 확인해줘.");
-        loadForSelectedDate();
-        dlg.close();
-      }catch{
-        alert("JSON 형식이 올바르지 않아요. (백업 텍스트 전체를 그대로 붙여넣었는지 확인)");
-      }
-    });
-
-    // ========= 이벤트 연결 =========
-    $("saveBtn").addEventListener("click", saveForSelectedDate);
-    $("loadBtn").addEventListener("click", loadForSelectedDate);
-    $("deleteBtn").addEventListener("click", deleteForSelectedDate);
-
-    $("exportBtn").addEventListener("click", openExport);
-    $("importBtn").addEventListener("click", openImport);
-
-    dateInput.addEventListener("change", () => {
-      loadForSelectedDate();
-    });
-
-    // 입력 시 자동저장(원하지 않으면 아래 3줄 지워도 됨)
-    fields.forEach(t => t.addEventListener("input", scheduleAutosave));
-
-    // ========= 초기화 =========
-    dateInput.value = todayISO();
-    loadForSelectedDate();
-  </script>
 </body>
 </html>
