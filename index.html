@@ -175,7 +175,6 @@ body::before{
   color:#888;
 }
 
-/* 기본 textarea */
 textarea{
   width:100%;
   min-height:100px;
@@ -183,12 +182,14 @@ textarea{
   border:1px solid #eee;
   padding:12px;
   font-size:14px;
-  resize:vertical;
+  resize:none;
+  overflow:hidden;
+  transition:height .15s ease;
 }
 
-/* ✅ 크게 쓸 칸 (3배) */
+/* 크게 시작할 칸 */
 .big{
-  min-height:300px;
+  min-height:200px;
 }
 
 .two-col{
@@ -207,29 +208,10 @@ textarea{
 
 <div class="top-fixed">
   <h1>🌷 나의 경험 해석 🌷</h1>
-
-  <div class="calendar">
-    <div class="calendar-controls">
-      <button onclick="changeYear(-1)">⏮</button>
-      <button onclick="changeMonth(-1)">◀</button>
-      <div class="calendar-header" id="monthLabel"></div>
-      <button onclick="changeMonth(1)">▶</button>
-      <button onclick="changeYear(1)">⏭</button>
-    </div>
-
-    <div class="weekdays">
-      <div>일</div><div>월</div><div>화</div><div>수</div>
-      <div>목</div><div>금</div><div>토</div>
-    </div>
-
-    <div class="calendar-grid" id="calendarGrid"></div>
-    <button class="save-btn" id="saveBtn">저장</button>
-  </div>
 </div>
 
 <div class="content">
 
-  <!-- 1번 크게 -->
   <div class="field">
     <div class="label">
       <b>1) 나에게 일어났던 일</b>
@@ -239,7 +221,6 @@ textarea{
   </div>
 
   <div class="two-col">
-    <!-- 2번 그대로 -->
     <div class="field">
       <div class="label">
         <b>2) 그때 감정</b>
@@ -248,7 +229,6 @@ textarea{
       <textarea id="f2"></textarea>
     </div>
 
-    <!-- 3번 크게 -->
     <div class="field">
       <div class="label">
         <b>3) 그때 생각</b>
@@ -258,7 +238,6 @@ textarea{
     </div>
   </div>
 
-  <!-- 4번 크게 -->
   <div class="field">
     <div class="label">
       <b>4) 다른 가정 해보기</b>
@@ -267,7 +246,6 @@ textarea{
     <textarea id="f4" class="big"></textarea>
   </div>
 
-  <!-- 5번 크게 -->
   <div class="field">
     <div class="label">
       <b>5) 다른 가정 선택하기</b>
@@ -277,7 +255,6 @@ textarea{
   </div>
 
   <div class="two-col">
-    <!-- 6번 크게 -->
     <div class="field">
       <div class="label">
         <b>6) 선택한 이후의 생각</b>
@@ -286,7 +263,6 @@ textarea{
       <textarea id="f6" class="big"></textarea>
     </div>
 
-    <!-- 7번 그대로 -->
     <div class="field">
       <div class="label">
         <b>7) 선택한 이후의 감정</b>
@@ -297,3 +273,19 @@ textarea{
   </div>
 
 </div>
+
+<script>
+/* ✨ 자동 높이 확장 */
+function autoResize(textarea){
+  textarea.style.height = "auto";
+  textarea.style.height = textarea.scrollHeight + "px";
+}
+
+document.querySelectorAll("textarea").forEach(textarea=>{
+  autoResize(textarea);
+  textarea.addEventListener("input", ()=>autoResize(textarea));
+});
+</script>
+
+</body>
+</html>
