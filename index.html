@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>🌷 나의 경험 해석 🌷</title>
 
-<!-- 글씨체 변경 -->
 <link href="https://fonts.googleapis.com/css2?family=Poor+Story&display=swap" rel="stylesheet">
 
 <style>
@@ -15,16 +14,16 @@ body{
   font-family: 'Poor Story', cursive;
   height:100vh;
   overflow:hidden;
-  background:#fff9d6; /* 전체 기본 연노랑 */
+  background:#fff9d6;
 }
 
-/* ===== 상단 하늘색 영역 ===== */
+/* ===== 상단 하늘색 ===== */
 .top-fixed{
   position:fixed;
   top:0;
   left:0;
   width:100%;
-  background:#bfe6ff; /* 하늘색 */
+  background:#bfe6ff;
   padding:18px;
   box-shadow:0 4px 20px rgba(0,0,0,.08);
   z-index:1000;
@@ -56,21 +55,37 @@ body{
   font-size:20px;
 }
 
-button{
-  padding:10px 14px;
-  border-radius:14px;
-  border:none;
-  cursor:pointer;
-  font-size:15px;
-  font-family: 'Poor Story', cursive;
-}
-
+/* 저장 버튼 하트 애니메이션 */
 .save-btn{
   background:#ff9ecf;
   color:#fff;
+  border:none;
+  border-radius:14px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-size:15px;
+  transition:transform .2s;
+  position:relative;
 }
 
-/* ===== 아래 연한 노랑 도트 배경 ===== */
+.save-btn:active{
+  transform:scale(1.1);
+}
+
+.save-btn::after{
+  content:"💖";
+  position:absolute;
+  right:-20px;
+  opacity:0;
+  transition:all .5s;
+}
+
+.save-btn.clicked::after{
+  opacity:1;
+  transform:translateY(-15px);
+}
+
+/* ===== 꽃 패턴 연노랑 배경 ===== */
 .content{
   position:absolute;
   top:170px;
@@ -81,9 +96,10 @@ button{
   padding:20px;
 
   background:
-    radial-gradient(#ffffff 1px, transparent 1px);
-  background-size: 16px 16px;
-  background-color:#fff9d6; /* 연노랑 */
+    radial-gradient(circle at 10px 10px, #ffffff 6px, transparent 7px),
+    radial-gradient(circle at 30px 30px, #ffe4f0 5px, transparent 6px);
+  background-size:40px 40px;
+  background-color:#fff9d6;
 }
 
 .field{
@@ -92,6 +108,11 @@ button{
   padding:16px;
   margin-bottom:18px;
   box-shadow:0 6px 18px rgba(0,0,0,.1);
+  transition:box-shadow .3s;
+}
+
+.field.sparkle{
+  box-shadow:0 0 20px #ffd6f5;
 }
 
 .field b{
@@ -124,46 +145,19 @@ textarea{
   <div class="date-row">
     <input type="date" id="dateInput">
     <span id="savedMark" class="saved-indicator"></span>
-    <button class="save-btn" onclick="saveData()">저장</button>
+    <button class="save-btn" id="saveBtn">저장</button>
   </div>
 </div>
 
 <div class="content">
 
-  <div class="field">
-    <b>1) 나에게 일어났던 일</b>
-    <textarea id="f1" class="big"></textarea>
-  </div>
-
-  <div class="field">
-    <b>2) 그때 감정</b>
-    <textarea id="f2"></textarea>
-  </div>
-
-  <div class="field">
-    <b>3) 그때 생각</b>
-    <textarea id="f3" class="big"></textarea>
-  </div>
-
-  <div class="field">
-    <b>4) 다른 가정 해보기</b>
-    <textarea id="f4" class="big"></textarea>
-  </div>
-
-  <div class="field">
-    <b>5) 다른 가정 선택하기</b>
-    <textarea id="f5" class="big"></textarea>
-  </div>
-
-  <div class="field">
-    <b>6) 선택한 이후의 생각</b>
-    <textarea id="f6" class="big"></textarea>
-  </div>
-
-  <div class="field">
-    <b>7) 선택한 이후의 감정</b>
-    <textarea id="f7"></textarea>
-  </div>
+  <div class="field"><b>1) 나에게 일어났던 일</b><textarea id="f1" class="big"></textarea></div>
+  <div class="field"><b>2) 그때 감정</b><textarea id="f2"></textarea></div>
+  <div class="field"><b>3) 그때 생각</b><textarea id="f3" class="big"></textarea></div>
+  <div class="field"><b>4) 다른 가정 해보기</b><textarea id="f4" class="big"></textarea></div>
+  <div class="field"><b>5) 다른 가정 선택하기</b><textarea id="f5" class="big"></textarea></div>
+  <div class="field"><b>6) 선택한 이후의 생각</b><textarea id="f6" class="big"></textarea></div>
+  <div class="field"><b>7) 선택한 이후의 감정</b><textarea id="f7"></textarea></div>
 
 </div>
 
@@ -172,6 +166,7 @@ const STORAGE_KEY = "mind_record";
 const fields = ["f1","f2","f3","f4","f5","f6","f7"];
 const dateInput = document.getElementById("dateInput");
 const savedMark = document.getElementById("savedMark");
+const saveBtn = document.getElementById("saveBtn");
 
 dateInput.value = new Date().toISOString().slice(0,10);
 loadData();
@@ -180,6 +175,18 @@ updateSavedMark();
 dateInput.addEventListener("change", ()=>{
   loadData();
   updateSavedMark();
+});
+
+fields.forEach(id=>{
+  document.getElementById(id).addEventListener("input", ()=>{
+    autoSave();
+    sparkleEffect();
+  });
+});
+
+saveBtn.addEventListener("click", ()=>{
+  saveData();
+  heartEffect();
 });
 
 function saveData(){
@@ -194,8 +201,11 @@ function saveData(){
   });
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  alert("저장 완료 💛");
   updateSavedMark();
+}
+
+function autoSave(){
+  saveData();
 }
 
 function loadData(){
@@ -219,6 +229,18 @@ function updateSavedMark(){
   } else {
     savedMark.textContent = "";
   }
+}
+
+function heartEffect(){
+  saveBtn.classList.add("clicked");
+  setTimeout(()=>saveBtn.classList.remove("clicked"),600);
+}
+
+function sparkleEffect(){
+  document.querySelectorAll(".field").forEach(f=>{
+    f.classList.add("sparkle");
+    setTimeout(()=>f.classList.remove("sparkle"),400);
+  });
 }
 </script>
 
